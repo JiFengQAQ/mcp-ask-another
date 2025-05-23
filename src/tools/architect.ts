@@ -1,6 +1,6 @@
 import { z } from "zod";
 import OpenAI from "openai";
-import { OPENAI_API_KEY } from "../env/keys.js";
+import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_API_BASE_URL } from "../env/keys.js";
 
 /**
  * Architect tool
@@ -25,6 +25,7 @@ export async function runArchitectTool(
   // Instantiate the new OpenAI client
   const openai = new OpenAI({
     apiKey: OPENAI_API_KEY,
+    ...(OPENAI_API_BASE_URL && { baseURL: OPENAI_API_BASE_URL }),
   });
 
   const { task, code } = args;
@@ -34,8 +35,9 @@ export async function runArchitectTool(
   const userPrompt = `Task: ${task}\n\nCode:\n${code}\n\nPlease provide a step-by-step plan.`;
 
   try {
+    const modelToUse = OPENAI_MODEL && OPENAI_MODEL.trim() !== "" ? OPENAI_MODEL : "o3-mini-2025-01-31";
     const response = await openai.chat.completions.create({
-      model: "o3-mini-2025-01-31",
+      model: modelToUse,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },

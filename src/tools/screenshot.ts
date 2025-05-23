@@ -39,6 +39,11 @@ export async function runScreenshotTool(
     fullPage: true,
   })) as Buffer;
   await browser.close();
+
+  // Ensure the directory exists before writing the file
+  const dirname = path.dirname(fullPathToScreenshot);
+  await fs.promises.mkdir(dirname, { recursive: true });
+
   await fs.promises.writeFile(fullPathToScreenshot, screenshotBuffer);
   // Return the base64 representation
   return {
