@@ -9,7 +9,7 @@ import { execSync } from "child_process";
 
 export const codeReviewToolName = "code-review";
 export const codeReviewToolDescription =
-  "Run a git diff against main on a specified file and provide instructions to review/fix issues.";
+  "Run a git diff against HEAD on a specified file and provide instructions to review/fix issues.";
 
 export const CodeReviewToolSchema = z.object({
   folderPath: z.string().min(1, "A folder path is required."),
@@ -22,7 +22,7 @@ export async function runCodeReviewTool(
 
   let diffOutput = "";
   try {
-    diffOutput = execSync(`git -C "${folderPath}" diff`, {
+    diffOutput = execSync(`git -C "${folderPath}" diff HEAD`, {
       encoding: "utf-8",
     });
   } catch (error) {
